@@ -1,4 +1,4 @@
-FROM mongo:4.4.6
+FROM mongo:3.6.23
 
 ARG CLOUD_SDK_VERSION=338.0.0
 

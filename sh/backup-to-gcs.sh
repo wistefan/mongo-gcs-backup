@@ -5,10 +5,11 @@ date=$(date "+%Y-%m-%dT%H:%M:%SZ")
 filename=${BACKUP_FILE_PREFIX}-${date}
 
 
+
 if [[ -z "${MONGO_PASSWORD}" ]]; then
-  mongodump --host=${MONGO_HOST} --port=${MONGO_PORT} --username=${MONGO_USERNAME} --authenticationDatabase=${MONGO_AUTHENTICATION_DATABASE} --out=/temp/backup
+  mongodump --host="${MONGO_HOST}" --port="${MONGO_PORT}" --username="${MONGO_USER}" --authenticationDatabase="${MONGO_AUTHENTICATION_DATABASE}" --out=/temp/backup
 else
-  mongodump --host=${MONGO_HOST} --port=${MONGO_PORT} --username=${MONGO_USERNAME} --password=${MONGO_PASSWORD} --authenticationDatabase=${MONGO_AUTHENTICATION_DATABASE} --out=/temp/backup
+  mongodump --host="${MONGO_HOST}" --port="${MONGO_PORT}" --username=${MONGO_USER} --password=${MONGO_PASSWORD} --authenticationDatabase="${MONGO_AUTHENTICATION_DATABASE}" --out=/temp/backup
 fi
 
 tar -czvf /temp/${filename}.tar.gz /temp/backup
