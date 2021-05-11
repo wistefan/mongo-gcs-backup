@@ -1,0 +1,13 @@
+apiVersion: v1
+name: mongo-gcs-backup
+version: 0.0.1
+appVersion: 0.0.1
+description: A Helm chart for backing up mongo instances to gcs on kubernetes.
+keywords:
+  - mongo
+  - gcs
+sources:
+  - https://github.com/wistefan/mongo-gcs-backup
+maintainers:
+  - name: wistefan
+    email: stefan.wiedemann@fiware.org

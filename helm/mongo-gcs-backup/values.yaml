@@ -1,0 +1,23 @@
+## -- configuration of the image to be used
+image:
+  repository: wistefan/mongo-gcs-backup
+  tag: latest
+  pullPolicy: IfNotPresent
+
+## -- securityContext to be used for the contaienrs
+securityContext: {}
+## -- service account to be used
+serviceAccountName: gcs-backup
+## -- file prefix of the backup
+filePrefix: mongodump
+## -- name of the bucket to be used for backup
+bucketName: "gs://my/bucket"
+## -- name of the secret containing the service account to be used for accessing the bucket. The account should be provided in json format and have write permission on the referenced schema
+secretName: gcs-secret
+## -- db instance to be backed up
+db:
+  host: localhost
+  port: 27017
+  user: root
+  password:
+  authDb: admin

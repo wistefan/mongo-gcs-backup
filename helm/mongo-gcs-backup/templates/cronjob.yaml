@@ -1,0 +1,62 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "mongo-gcs-backup.fullname" . }}
+  labels:
+    app: {{ template "mongo-gcs-backup.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: {{ template "mongo-gcs-backup.fullname" . }}
+          labels:
+            app: {{ .Release.Name }}
+            cron: {{ template "mongo-gcs-backup.name" . }}
+        spec:
+          serviceAccountName: {{ .Values.serviceAccountName }}
+          restartPolicy: Never
+          containers:
+          - name: {{ .Chart.Name }}
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- with .Values.securityContext }}
+            securityContext:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            env:
+              - name: BACKUP_FILE_PREFIX
+                value: {{ .Values.filePrefix }}
+              - name: GCS_BUCKET
+                value: {{ .Values.bucketName }}
+              - name: MONGO_HOST
+                value: {{ .Values.db.host }}
+              - name: MONGO_PORT
+                value: {{ .Values.db.port | quote }}
+              - name: MONGO_USER
+                value: {{ .Values.db.user }}
+              - name: MONGO_AUTHENTICATION_DATABASE
+                value: { { .Values.db.authDb } }
+              {{- if .Values.db.password }}
+              - name: MONGO_PASSWORD
+                value: {{ .Values.db.password }}
+              {{- end }}
+            volumeMounts:
+              - name: gcp-secret
+                mountPath: /gcs/credentials.json
+                subPath: credentials.json
+                readOnly: true
+              - name: temp-folder
+                mountPath: /temp
+            resources:
+  {{ toYaml .Values.resources | indent 12 }}
+          volumes:
+            - name: gcp-secret
+              secret:
+                secretName: {{ .Values.secretName }}
+            - name: temp-folder
+              emptyDir: {}
